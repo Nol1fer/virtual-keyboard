@@ -1,0 +1,96 @@
+$deep-aqua: #003b46;
+$ocean: #07575b;
+$wave: #66a5ad;
+$seafoam: #c4dfe6;
+
+$keyboard-bg: #c8b6ff;
+$key-bg: #ffd6ff;
+$key-color: #29054a;
+$fn-key-bg: #e7c6ff;
+// $key-hovered-color: #bbd0ff;
+// $key-hovered-color: #c8e7ff;
+$key-hovered-color: #ffded6;
+
+// $key-pressed-color: #bae8ff;
+// $key-pressed-color: #c0fdff;
+$key-pressed-color: #fffad6;
+
+.wrapper {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 0 40px;
+}
+.keyboard {
+  max-width: 700px;
+  margin: 0 auto;
+
+  background-color: $keyboard-bg;
+}
+
+.keyboard__row {
+  display: flex;
+}
+
+.key {
+  height: 40px;
+  width: 40px;
+  margin: 3px;
+  background-color: $key-bg;
+  color: $key-color;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  // font-size: 1.1rem;
+  border-radius: 5px;
+  font-family: sans-serif;
+  transition: border-radius 0.3s, background-color 0.3s;
+  &:hover {
+    background-color: $key-hovered-color;
+  }
+  // &_fn {
+  //   background-color: $fn-key-bg;
+  // }
+  &.pressed {
+    background-color: $key-pressed-color;
+    border-radius: 30px;
+  }
+
+  &_size-s {
+    width: 55px;
+  }
+  &_size-m {
+    width: 85px;
+  }
+  &_size-l {
+    width: 100px;
+  }
+  &_size-xl {
+    width: 338px;
+  }
+}
+
+// .key.pressed {
+//   background-color: #bae8ff;
+// }
+
+.key__mod {
+  display: none;
+}
+
+.letter-up .key_letter {
+  .key__base {
+    display: none;
+  }
+  .key__mod {
+    display: inline;
+  }
+}
+
+.symbol-up .key_symbol {
+  .key__base {
+    display: none;
+  }
+  .key__mod {
+    display: inline;
+  }
+}
