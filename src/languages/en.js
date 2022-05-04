@@ -140,7 +140,7 @@ export default [
     code: 'Backslash',
   },
   {
-    base: 'Delete',
+    base: 'Del',
     mod: null,
     code: 'Delete',
   },
