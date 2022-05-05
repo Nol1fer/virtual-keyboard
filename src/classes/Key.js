@@ -26,10 +26,12 @@ export default class Key {
     keyContainer.append(keyBase, keyMod);
 
     if (this.isFn) {
-      if (smallKeys.includes(this.code)) keyContainer.classList.add('key_size-s');
-      if (mediumKeys.includes(this.code)) keyContainer.classList.add('key_size-m');
-      if (largeKeys.includes(this.code)) keyContainer.classList.add('key_size-l');
-      if (this.code === 'Space') keyContainer.classList.add('key_size-xl');
+      let size = null;
+      if (smallKeys.includes(this.code)) size = 'key_size-s';
+      if (mediumKeys.includes(this.code)) size = 'key_size-m';
+      if (largeKeys.includes(this.code)) size = 'key_size-l';
+      if (this.code === 'Space') size = 'key_size-xl';
+      if (size) keyContainer.classList.add(size);
     } else if (/[a-zа-яё]/.test(this.base)) {
       keyContainer.classList.add('key_letter');
     } else if (/[0-9]/.test(this.base) || symbolKeys.includes(this.base)) {
