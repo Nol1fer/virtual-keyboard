@@ -23,6 +23,7 @@ export default class Key {
     if (this.mod !== null) keyMod.append(this.mod);
 
     const keyContainer = createNode('div', 'key');
+    keyContainer.dataset.code = this.code;
     keyContainer.append(keyBase, keyMod);
 
     if (this.isFn) {

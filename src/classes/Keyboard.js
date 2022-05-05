@@ -33,5 +33,78 @@ export default class Keyboard {
 
       currentKey += rowLength;
     });
+
+    console.log(this.currentKeys);
+
+    this.keyboardNode.addEventListener('mousedown', this.handleKeyEvent);
+    this.keyboardNode.addEventListener('mouseup', this.handleKeyEvent);
+    document.addEventListener('keydown', this.handleKeyEvent);
+    document.addEventListener('keyup', this.handleKeyEvent);
+
+    // debug
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'F11') {
+        console.log(this.capslockState, this.currentLanguage);
+      }
+    });
   }
+
+  handleKeyEvent = (event) => {
+    event.preventDefault();
+    console.log(event, event.type);
+    const eventType = event.type;
+    let eventCode;
+    if (eventType === 'mousedown' || eventType === 'mouseup') {
+      eventCode = this.handleMouse(event);
+      if (!eventCode) return;
+    } else {
+      eventCode = event.code;
+    }
+
+    const key = this.currentKeys.find((keyInfo) => keyInfo.code === eventCode);
+    if (!key) return;
+    const { keyNode } = key;
+
+    if (eventType === 'keydown' || eventType === 'keyup') keyNode.removeEventListener('mouseleave', this.handleMouseLeave);
+
+    if (eventType === 'mousedown' || eventType === 'keydown') {
+      keyNode.classList.add('pressed');
+
+      // CapsLock
+      if (eventCode === 'CapsLock') {
+        this.capslockState = !this.capslockState;
+      }
+    } else {
+      // CapsLock
+      if (eventCode === 'CapsLock') {
+        if (this.capslockState) return;
+      }
+
+      keyNode.removeEventListener('mouseleave', this.handleMouseLeave);
+
+      keyNode.classList.remove('pressed');
+    }
+  };
+
+  handleMouse = (event) => {
+    const keyNode = event.target.closest('.key');
+    if (!keyNode) return null;
+    if (event.type === 'mousedown') keyNode.addEventListener('mouseleave', this.handleMouseLeave);
+    return keyNode.dataset.code;
+  };
+
+  handleMouseLeave = (event) => {
+    console.log(this.capslockState);
+
+    const keyNode = event.target.closest('.key');
+    const eventCode = keyNode.dataset.code;
+
+    keyNode.removeEventListener('mouseleave', this.handleMouseLeave);
+
+    if (eventCode === 'CapsLock') {
+      if (this.capslockState) return;
+    }
+
+    keyNode.classList.remove('pressed');
+  };
 }
