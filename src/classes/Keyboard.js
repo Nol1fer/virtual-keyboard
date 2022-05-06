@@ -8,6 +8,8 @@ const keysInRows = [14, 15, 13, 13, 9];
 export default class Keyboard {
   constructor() {
     this.capslockState = false;
+    this.shiftLeftState = false;
+    this.shiftRightState = false;
     this.pressedKeys = new Set();
     this.keyboardNode = createNode('div', 'keyboard');
     this.currentLanguage = 0;
@@ -44,15 +46,20 @@ export default class Keyboard {
     // debug
     document.addEventListener('keydown', (e) => {
       if (e.code === 'F11') {
-        console.log(this.capslockState, this.currentLanguage);
+        console.log(
+          this.capslockState,
+          this.shiftLeftState,
+          this.shiftRightState,
+          this.currentLanguage,
+        );
       }
     });
   }
 
   handleKeyEvent = (event) => {
     event.preventDefault();
-    console.log(event, event.type);
     const eventType = event.type;
+
     let eventCode;
     if (eventType === 'mousedown' || eventType === 'mouseup') {
       eventCode = this.handleMouse(event);
@@ -61,23 +68,47 @@ export default class Keyboard {
       eventCode = event.code;
     }
 
-    const key = this.currentKeys.find((keyInfo) => keyInfo.code === eventCode);
-    if (!key) return;
-    const { keyNode } = key;
+    console.log(event.type, eventCode);
 
-    if (eventType === 'keydown' || eventType === 'keyup') keyNode.removeEventListener('mouseleave', this.handleMouseLeave);
+    const keyInstance = this.currentKeys.find((keyInfo) => keyInfo.code === eventCode);
+    if (!keyInstance) return;
+    const { keyNode } = keyInstance;
 
     if (eventType === 'mousedown' || eventType === 'keydown') {
-      keyNode.classList.add('pressed');
-
-      // CapsLock
+      // CapsLock-down
       if (eventCode === 'CapsLock') {
         this.capslockState = !this.capslockState;
+        this.keyboardNode.classList.toggle('letter-up');
       }
+      // Shift-down
+      if ((eventCode === 'ShiftLeft' || eventCode === 'ShiftRight') && (this.shiftLeftState || this.shiftRightState)) return;
+      if (eventCode === 'ShiftLeft' && !this.shiftLeftState) {
+        this.shiftLeftState = true;
+        this.keyboardNode.classList.toggle('letter-up');
+        this.keyboardNode.classList.toggle('symbol-up');
+      }
+      if (eventCode === 'ShiftRight' && !this.shiftRightState) {
+        this.shiftRightState = true;
+        this.keyboardNode.classList.toggle('letter-up');
+        this.keyboardNode.classList.toggle('symbol-up');
+      }
+
+      keyNode.classList.add('pressed');
     } else {
-      // CapsLock
+      // CapsLock-up
       if (eventCode === 'CapsLock') {
         if (this.capslockState) return;
+      }
+      // Shift-up
+      if (eventCode === 'ShiftLeft' && this.shiftLeftState) {
+        this.shiftLeftState = false;
+        this.keyboardNode.classList.toggle('letter-up');
+        this.keyboardNode.classList.toggle('symbol-up');
+      }
+      if (eventCode === 'ShiftRight' && this.shiftRightState) {
+        this.shiftRightState = false;
+        this.keyboardNode.classList.toggle('letter-up');
+        this.keyboardNode.classList.toggle('symbol-up');
       }
 
       keyNode.removeEventListener('mouseleave', this.handleMouseLeave);
@@ -94,15 +125,27 @@ export default class Keyboard {
   };
 
   handleMouseLeave = (event) => {
-    console.log(this.capslockState);
+    // console.log(this.capslockState);
 
     const keyNode = event.target.closest('.key');
     const eventCode = keyNode.dataset.code;
 
     keyNode.removeEventListener('mouseleave', this.handleMouseLeave);
 
+    // CapsLock-mouseleave
     if (eventCode === 'CapsLock') {
       if (this.capslockState) return;
+    }
+    // Shift-mouseleave
+    if (eventCode === 'ShiftLeft' && this.shiftLeftState) {
+      this.shiftLeftState = false;
+      this.keyboardNode.classList.toggle('letter-up');
+      this.keyboardNode.classList.toggle('symbol-up');
+    }
+    if (eventCode === 'ShiftRight' && this.shiftRightState) {
+      this.shiftRightState = false;
+      this.keyboardNode.classList.toggle('letter-up');
+      this.keyboardNode.classList.toggle('symbol-up');
     }
 
     keyNode.classList.remove('pressed');
