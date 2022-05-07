@@ -2,6 +2,8 @@
   margin: 0 auto;
   max-width: 1200px;
   padding: 0 40px;
+  display: flex;
+  justify-content: center;
 }
 
 .keyboard {
@@ -25,7 +27,9 @@
   align-items: center;
   border-radius: 5px;
   font-family: sans-serif;
+  font-weight: 700;
   transition: border-radius 0.3s, background-color 0.3s;
+  cursor: pointer;
 }
 .key:hover {
   background-color: #ffded6;

@@ -36,12 +36,13 @@ export default class Keyboard {
       currentKey += rowLength;
     });
 
-    console.log(this.currentKeys);
-
     this.keyboardNode.addEventListener('mousedown', this.handleKeyEvent);
     this.keyboardNode.addEventListener('mouseup', this.handleKeyEvent);
     document.addEventListener('keydown', this.handleKeyEvent);
     document.addEventListener('keyup', this.handleKeyEvent);
+
+    this.textArea = document.querySelector('#textarea');
+    console.log(this.textArea);
 
     // debug
     document.addEventListener('keydown', (e) => {
@@ -70,18 +71,23 @@ export default class Keyboard {
 
     console.log(event.type, eventCode);
 
-    const keyInstance = this.currentKeys.find((keyInfo) => keyInfo.code === eventCode);
+    const keyInstance = this.currentKeys.find(
+      (keyInfo) => keyInfo.code === eventCode,
+    );
     if (!keyInstance) return;
     const { keyNode } = keyInstance;
 
     if (eventType === 'mousedown' || eventType === 'keydown') {
       // CapsLock-down
-      if (eventCode === 'CapsLock') {
+      if (eventCode === 'CapsLock' && !event.repeat) {
         this.capslockState = !this.capslockState;
         this.keyboardNode.classList.toggle('letter-up');
       }
       // Shift-down
-      if ((eventCode === 'ShiftLeft' || eventCode === 'ShiftRight') && (this.shiftLeftState || this.shiftRightState)) return;
+      if (
+        (eventCode === 'ShiftLeft' || eventCode === 'ShiftRight')
+        && (this.shiftLeftState || this.shiftRightState)
+      ) { return; }
       if (eventCode === 'ShiftLeft' && !this.shiftLeftState) {
         this.shiftLeftState = true;
         this.keyboardNode.classList.toggle('letter-up');
@@ -93,6 +99,7 @@ export default class Keyboard {
         this.keyboardNode.classList.toggle('symbol-up');
       }
 
+      this.insertCharacter(keyInstance);
       keyNode.classList.add('pressed');
     } else {
       // CapsLock-up
@@ -120,7 +127,7 @@ export default class Keyboard {
   handleMouse = (event) => {
     const keyNode = event.target.closest('.key');
     if (!keyNode) return null;
-    if (event.type === 'mousedown') keyNode.addEventListener('mouseleave', this.handleMouseLeave);
+    if (event.type === 'mousedown') { keyNode.addEventListener('mouseleave', this.handleMouseLeave); }
     return keyNode.dataset.code;
   };
 
@@ -149,5 +156,73 @@ export default class Keyboard {
     }
 
     keyNode.classList.remove('pressed');
+  };
+
+  insertCharacter = (key) => {
+    if (
+      [
+        'CapsLock',
+        'ShiftLeft',
+        'ShiftRight',
+        'ControlLeft',
+        'MetaLeft',
+        'AltLeft',
+        'AltRight',
+        'ControlRight',
+      ].includes(key.code)
+    ) return;
+
+    const input = this.textArea;
+    input.focus();
+    let inputString;
+    let { selectionStart } = input;
+    let { selectionEnd } = input;
+
+    if (key.isFn) {
+      switch (key.code) {
+        case 'Backspace':
+          inputString = '';
+          selectionEnd = selectionStart;
+          selectionStart = selectionStart === 0 ? 0 : selectionStart - 1;
+          break;
+        case 'Delete':
+          inputString = '';
+          selectionEnd = selectionStart + 1;
+          break;
+        case 'Enter':
+          inputString = '\n';
+          break;
+        case 'Space':
+          inputString = ' ';
+          break;
+        case 'Tab':
+          inputString = '\t';
+          break;
+        default:
+          inputString = key.base;
+          break;
+      }
+    } else if (key.isSymbol) {
+      if (this.shiftLeftState || this.shiftRightState) inputString = key.mod;
+      else inputString = key.base;
+    } else if (key.isLetter) {
+      if (
+        (this.capslockState && (this.shiftLeftState || this.shiftRightState))
+        || (!this.capslockState && !(this.shiftLeftState || this.shiftRightState))
+      ) {
+        inputString = key.base;
+      } else inputString = key.mod;
+    }
+
+    this.defaultInsert(inputString, selectionStart, selectionEnd);
+  };
+
+  defaultInsert = (str, selectionStart, selectionEnd) => {
+    this.textArea.setRangeText(
+      str,
+      selectionStart,
+      selectionEnd,
+      'end',
+    );
   };
 }

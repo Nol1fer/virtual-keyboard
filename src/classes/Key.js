@@ -13,6 +13,8 @@ export default class Key {
     this.mod = mod;
     this.code = code;
     this.isFn = functionalKeys.includes(this.code);
+    this.isLetter = false;
+    this.isSymbol = false;
     this.keyNode = this.createKeyNode();
   }
 
@@ -35,8 +37,10 @@ export default class Key {
       if (size) keyContainer.classList.add(size);
     } else if (/[a-zа-яё]/.test(this.base)) {
       keyContainer.classList.add('key_letter');
+      this.isLetter = true;
     } else if (/[0-9]/.test(this.base) || symbolKeys.includes(this.base)) {
       keyContainer.classList.add('key_symbol');
+      this.isSymbol = true;
     }
     return keyContainer;
   }

@@ -35,8 +35,8 @@ export default [
     code: 'Digit6',
   },
   {
-    base: '?',
-    mod: '&',
+    base: '7',
+    mod: '?',
     code: 'Digit7',
   },
   {
