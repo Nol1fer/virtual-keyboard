@@ -7,18 +7,24 @@ const keysInRows = [14, 15, 13, 13, 9];
 
 export default class Keyboard {
   constructor() {
-    this.capslockState = false;
-    this.shiftLeftState = false;
-    this.shiftRightState = false;
     this.pressedKeys = new Set();
     this.keyboardNode = createNode('div', 'keyboard');
-    this.currentLanguage = 0;
+    this.currentLanguage = +localStorage.getItem('lang') % 2 || 0;
   }
 
   generateKeyboard() {
+    this.capslockState = false;
+    this.shiftLeftState = false;
+    this.shiftRightState = false;
+    this.keyboardNode.classList.remove('letter-up');
+    this.keyboardNode.classList.remove('symbol-up');
+
+    localStorage.setItem('lang', this.currentLanguage);
+
     this.currentKeys = [];
     let currentKey = 0;
-    this.keyboardNode.innerHtml = '';
+
+    this.keyboardNode.innerHTML = '';
 
     keysInRows.forEach((rowLength) => {
       const rowNode = createNode('div', 'keyboard__row');
@@ -69,7 +75,7 @@ export default class Keyboard {
       eventCode = event.code;
     }
 
-    console.log(event.type, eventCode);
+    console.log(event.type, eventCode, event);
 
     const keyInstance = this.currentKeys.find(
       (keyInfo) => keyInfo.code === eventCode,
@@ -87,7 +93,7 @@ export default class Keyboard {
       if (
         (eventCode === 'ShiftLeft' || eventCode === 'ShiftRight')
         && (this.shiftLeftState || this.shiftRightState)
-      ) { return; }
+      ) return;
       if (eventCode === 'ShiftLeft' && !this.shiftLeftState) {
         this.shiftLeftState = true;
         this.keyboardNode.classList.toggle('letter-up');
@@ -97,6 +103,9 @@ export default class Keyboard {
         this.shiftRightState = true;
         this.keyboardNode.classList.toggle('letter-up');
         this.keyboardNode.classList.toggle('symbol-up');
+      }
+      if (((eventCode === 'ControlLeft' && event.altKey) || (eventCode === 'AltLeft' && event.ctrlKey)) && !event.repeat) {
+        this.switchLanguage();
       }
 
       this.insertCharacter(keyInstance);
@@ -224,5 +233,10 @@ export default class Keyboard {
       selectionEnd,
       'end',
     );
+  };
+
+  switchLanguage = () => {
+    this.currentLanguage = (this.currentLanguage + 1) % 2;
+    this.generateKeyboard();
   };
 }

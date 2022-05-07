@@ -112,7 +112,7 @@ export default [
   {
     base: 'i',
     mod: 'I',
-    code: 'KeyY',
+    code: 'KeyI',
   },
   {
     base: 'o',

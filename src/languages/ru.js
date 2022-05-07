@@ -112,7 +112,7 @@ export default [
   {
     base: 'ш',
     mod: 'Щ',
-    code: 'KeyY',
+    code: 'KeyI',
   },
   {
     base: 'щ',
