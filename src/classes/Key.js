@@ -1,7 +1,25 @@
 /* eslint-disable import/extensions */
 import createNode from '../functions/createNode.js';
 
-const functionalKeys = ['Backspace', 'Tab', 'Delete', 'CapsLock', 'Enter', 'ShiftLeft', 'ArrowUp', 'ShiftRight', 'ControlLeft', 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'ArrowLeft', 'ArrowDown', 'ArrowRight', 'ControlRight'];
+const functionalKeys = [
+  'Backspace',
+  'Tab',
+  'Delete',
+  'CapsLock',
+  'Enter',
+  'ShiftLeft',
+  'ArrowUp',
+  'ShiftRight',
+  'ControlLeft',
+  'MetaLeft',
+  'AltLeft',
+  'Space',
+  'AltRight',
+  'ArrowLeft',
+  'ArrowDown',
+  'ArrowRight',
+  'ControlRight',
+];
 const smallKeys = ['Tab'];
 const mediumKeys = ['CapsLock', 'ShiftRight'];
 const largeKeys = ['Backspace', 'Enter', 'ShiftLeft'];

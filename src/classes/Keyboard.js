@@ -7,9 +7,9 @@ const keysInRows = [14, 15, 13, 13, 9];
 
 export default class Keyboard {
   constructor() {
-    this.pressedKeys = new Set();
     this.keyboardNode = createNode('div', 'keyboard');
     this.currentLanguage = +localStorage.getItem('lang') % 2 || 0;
+    this.textArea = document.querySelector('.input');
   }
 
   generateKeyboard() {
@@ -18,6 +18,7 @@ export default class Keyboard {
     this.shiftRightState = false;
     this.keyboardNode.classList.remove('letter-up');
     this.keyboardNode.classList.remove('symbol-up');
+    this.pressedKeys = new Set();
 
     localStorage.setItem('lang', this.currentLanguage);
 
@@ -46,21 +47,6 @@ export default class Keyboard {
     this.keyboardNode.addEventListener('mouseup', this.handleKeyEvent);
     document.addEventListener('keydown', this.handleKeyEvent);
     document.addEventListener('keyup', this.handleKeyEvent);
-
-    this.textArea = document.querySelector('#textarea');
-    console.log(this.textArea);
-
-    // debug
-    document.addEventListener('keydown', (e) => {
-      if (e.code === 'F11') {
-        console.log(
-          this.capslockState,
-          this.shiftLeftState,
-          this.shiftRightState,
-          this.currentLanguage,
-        );
-      }
-    });
   }
 
   handleKeyEvent = (event) => {
@@ -75,8 +61,6 @@ export default class Keyboard {
       eventCode = event.code;
     }
 
-    console.log(event.type, eventCode, event);
-
     const keyInstance = this.currentKeys.find(
       (keyInfo) => keyInfo.code === eventCode,
     );
@@ -84,12 +68,10 @@ export default class Keyboard {
     const { keyNode } = keyInstance;
 
     if (eventType === 'mousedown' || eventType === 'keydown') {
-      // CapsLock-down
       if (eventCode === 'CapsLock' && !event.repeat) {
         this.capslockState = !this.capslockState;
         this.keyboardNode.classList.toggle('letter-up');
       }
-      // Shift-down
       if (
         (eventCode === 'ShiftLeft' || eventCode === 'ShiftRight')
         && (this.shiftLeftState || this.shiftRightState)
@@ -104,18 +86,20 @@ export default class Keyboard {
         this.keyboardNode.classList.toggle('letter-up');
         this.keyboardNode.classList.toggle('symbol-up');
       }
-      if (((eventCode === 'ControlLeft' && event.altKey) || (eventCode === 'AltLeft' && event.ctrlKey)) && !event.repeat) {
-        this.switchLanguage();
+      if (eventCode === 'ControlLeft' || eventCode === 'AltLeft') {
+        this.pressedKeys.add(eventCode);
       }
 
       this.insertCharacter(keyInstance);
       keyNode.classList.add('pressed');
+
+      if (this.pressedKeys.has('ControlLeft') && this.pressedKeys.has('AltLeft')) {
+        this.switchLanguage();
+      }
     } else {
-      // CapsLock-up
       if (eventCode === 'CapsLock') {
         if (this.capslockState) return;
       }
-      // Shift-up
       if (eventCode === 'ShiftLeft' && this.shiftLeftState) {
         this.shiftLeftState = false;
         this.keyboardNode.classList.toggle('letter-up');
@@ -125,6 +109,9 @@ export default class Keyboard {
         this.shiftRightState = false;
         this.keyboardNode.classList.toggle('letter-up');
         this.keyboardNode.classList.toggle('symbol-up');
+      }
+      if (eventCode === 'ControlLeft' || eventCode === 'AltLeft') {
+        this.pressedKeys.delete(eventCode);
       }
 
       keyNode.removeEventListener('mouseleave', this.handleMouseLeave);
@@ -136,23 +123,19 @@ export default class Keyboard {
   handleMouse = (event) => {
     const keyNode = event.target.closest('.key');
     if (!keyNode) return null;
-    if (event.type === 'mousedown') { keyNode.addEventListener('mouseleave', this.handleMouseLeave); }
+    if (event.type === 'mousedown') keyNode.addEventListener('mouseleave', this.handleMouseLeave);
     return keyNode.dataset.code;
   };
 
   handleMouseLeave = (event) => {
-    // console.log(this.capslockState);
-
     const keyNode = event.target.closest('.key');
     const eventCode = keyNode.dataset.code;
 
     keyNode.removeEventListener('mouseleave', this.handleMouseLeave);
 
-    // CapsLock-mouseleave
     if (eventCode === 'CapsLock') {
       if (this.capslockState) return;
     }
-    // Shift-mouseleave
     if (eventCode === 'ShiftLeft' && this.shiftLeftState) {
       this.shiftLeftState = false;
       this.keyboardNode.classList.toggle('letter-up');
@@ -162,6 +145,9 @@ export default class Keyboard {
       this.shiftRightState = false;
       this.keyboardNode.classList.toggle('letter-up');
       this.keyboardNode.classList.toggle('symbol-up');
+    }
+    if (eventCode === 'ControlLeft' || eventCode === 'AltLeft') {
+      this.pressedKeys.delete(eventCode);
     }
 
     keyNode.classList.remove('pressed');
@@ -237,6 +223,12 @@ export default class Keyboard {
 
   switchLanguage = () => {
     this.currentLanguage = (this.currentLanguage + 1) % 2;
+
+    this.keyboardNode.removeEventListener('mousedown', this.handleKeyEvent);
+    this.keyboardNode.removeEventListener('mouseup', this.handleKeyEvent);
+    document.removeEventListener('keydown', this.handleKeyEvent);
+    document.removeEventListener('keyup', this.handleKeyEvent);
+
     this.generateKeyboard();
   };
 }
