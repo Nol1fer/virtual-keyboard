@@ -1,7 +1,5 @@
 /* eslint-disable import/extensions */
-// import languages from './languages/languages.js';
 import createNode from './functions/createNode.js';
-// import Key from './classes/Key.js';
 import Keyboard from './classes/Keyboard.js';
 
 const wrapper = createNode('div', 'wrapper');
