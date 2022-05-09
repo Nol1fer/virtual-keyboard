@@ -1,0 +1,83 @@
+p {
+  font-size: 20px;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.wrapper {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 0 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input {
+  width: 690px;
+  height: 217px;
+  margin: 0 0 30px;
+}
+
+.keyboard {
+  max-width: 700px;
+  margin: 0 auto;
+  background-color: #c8b6ff;
+}
+
+.keyboard__row {
+  display: flex;
+}
+
+.key {
+  height: 40px;
+  width: 40px;
+  margin: 3px;
+  background-color: #ffd6ff;
+  color: #29054a;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  font-family: sans-serif;
+  font-weight: 700;
+  transition: border-radius 0.3s, background-color 0.3s;
+  cursor: pointer;
+}
+.key:hover {
+  background-color: #ffded6;
+}
+.key.pressed {
+  background-color: #fffad6;
+  border-radius: 30px;
+}
+.key_size-s {
+  width: 55px;
+}
+.key_size-m {
+  width: 85px;
+}
+.key_size-l {
+  width: 100px;
+}
+.key_size-xl {
+  width: 338px;
+}
+
+.key__mod {
+  display: none;
+}
+
+.letter-up .key_letter .key__base {
+  display: none;
+}
+.letter-up .key_letter .key__mod {
+  display: inline;
+}
+
+.symbol-up .key_symbol .key__base {
+  display: none;
+}
+.symbol-up .key_symbol .key__mod {
+  display: inline;
+}

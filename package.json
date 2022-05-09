@@ -1,0 +1,27 @@
+{
+  "name": "virtual-keyboard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint ./src",
+    "lint:fix": "eslint --fix ./src",
+    "style": "sass ./sass/style.scss ./sass/style.css",
+    "stylew": "sass --watch ./sass/style.scss ./sass/style.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nol1fer/virtual-keyboard.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nol1fer/virtual-keyboard/issues"
+  },
+  "homepage": "https://github.com/Nol1fer/virtual-keyboard#readme",
+  "devDependencies": {
+    "eslint": "^8.14.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0"
+  }
+}
